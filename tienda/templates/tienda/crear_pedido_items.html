@@ -1,0 +1,29 @@
+{% extends "tienda/base.html" %}
+{% block title %}Nuevo pedido (con ítems){% endblock %}
+{% block content %}
+  <h1>Nuevo pedido</h1>
+  <form method="post">
+    {% csrf_token %}
+    <fieldset>
+      <legend>Datos del pedido</legend>
+      {{ pedido_form.as_p }}
+    </fieldset>
+
+    <fieldset>
+      <legend>Ítems</legend>
+      {{ formset.management_form }}
+      {% for form in formset %}
+        <div style="border:1px solid #ddd; padding:10px; margin-bottom:10px;">
+          {{ form.as_p }}
+          {% if form.instance.pk %}
+            <!-- Muestra check de borrar si el ítem ya existe -->
+            <label>{{ form.DELETE }} Eliminar este ítem</label>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </fieldset>
+
+    <button class="btn btn-pill" type="submit">Guardar</button>
+    <a class="btn btn-pill" href="{% url 'tienda:lista_pedidos' %}">Cancelar</a>
+  </form>
+{% endblock %}

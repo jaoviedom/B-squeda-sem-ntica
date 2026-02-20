@@ -1,0 +1,84 @@
+{% extends "tienda/base.html" %}
+<!-- Heredamos layout, navbar y estilos comunes -->
+
+{% block title %}Pedido #{{ pedido.id }}{% endblock %}
+<!-- Título dinámico en la pestaña del navegador -->
+
+{% block content %}
+  <h1>Pedido #{{ pedido.id }}</h1>
+
+  <!-- Datos generales del pedido -->
+  <p><strong>Cliente:</strong> {{ pedido.cliente.nombre }}</p>
+  <p><strong>Estado:</strong> {{ pedido.estado }}</p>
+  <p><strong>Fecha:</strong> {{ pedido.fecha|date:"d/m/Y H:i" }}</p>
+
+  <h3>Ítems del pedido</h3>
+
+  {% if items %}
+    <!-- Tabla de ítems con cantidad, precio unitario y subtotal por línea -->
+    <table style="width:100%; border-collapse: collapse;">
+      <thead>
+        <tr>
+          <th style="text-align:left; border-bottom:1px solid #ddd; padding:8px;">Producto</th>
+          <th style="text-align:right; border-bottom:1px solid #ddd; padding:8px;">Cantidad</th>
+          <th style="text-align:right; border-bottom:1px solid #ddd; padding:8px;">Precio unit.</th>
+          <th style="text-align:right; border-bottom:1px solid #ddd; padding:8px;">Subtotal</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for it in items %}
+          <tr>
+            <!-- Nombre del producto (desde FK) -->
+            <td style="padding:8px;">
+              {{ it.producto.nombre }}
+            </td>
+
+            <!-- Cantidad -->
+            <td style="padding:8px; text-align:right;">
+              {{ it.cantidad }}
+            </td>
+
+            <!-- Precio unitario formateado -->
+            <td style="padding:8px; text-align:right;">
+              ${{ it.precio_unitario|floatformat:2 }}
+            </td>
+
+            <!-- Subtotal por línea: viene como 'line_total' (ver nota de la vista) -->
+            <td style="padding:8px; text-align:right;">
+              ${{ it.line_total|floatformat:2 }}
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="4" style="padding:8px;">Este pedido no tiene ítems.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+
+      <!-- Totales del pedido (enviados desde la vista) -->
+      <tfoot>
+        <tr>
+          <td colspan="3" style="padding:8px; text-align:right; font-weight:600;">Total de unidades</td>
+          <td style="padding:8px; text-align:right; font-weight:600;">
+            {{ total_unidades|default:"0" }}
+          </td>
+        </tr>
+        <tr>
+          <td colspan="3" style="padding:8px; text-align:right; font-weight:700;">Total a pagar</td>
+          <td style="padding:8px; text-align:right; font-weight:700;">
+            ${{ total_pedido|floatformat:2 }}
+          </td>
+        </tr>
+      </tfoot>
+    </table>
+  {% else %}
+    <p>Este pedido aún no tiene ítems.</p>
+  {% endif %}
+
+  <!-- Acciones usuales sobre el pedido -->
+  <p style="margin-top:16px;">
+    <a class="btn btn-pill" href="{% url 'tienda:editar_pedido_items' pedido.pk %}">✏️ Editar ítems</a>
+    <a class="btn btn-pill" href="{% url 'tienda:eliminar_pedido' pedido.pk %}" style="background:#ff3b30;">🗑️ Eliminar pedido</a>
+    <a class="btn btn-pill" href="{% url 'tienda:lista_pedidos' %}">↩️ Volver a la lista</a>
+  </p>
+{% endblock %}

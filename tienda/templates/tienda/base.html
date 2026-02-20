@@ -1,0 +1,31 @@
+{% load static %} 
+<!-- Cargamos la etiqueta 'static' de Django. Esto permite referenciar archivos estáticos como CSS, JS e imágenes en nuestras plantillas. -->
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>{% block title %}Django AI Lab{% endblock %}</title>
+  <!-- Definimos un bloque 'title' que las demás plantillas pueden sobrescribir. -->
+
+  <!-- Aquí enlazamos un archivo CSS estático. La etiqueta {% static 'css/main.css' %} busca el archivo en la carpeta configurada para estáticos. -->
+  <link rel="stylesheet" href="{% static 'css/main.css' %}">
+
+  <!-- También podríamos usar un CDN como Bootstrap o Tailwind directamente aquí. -->
+</head>
+<body>
+  <!-- Incluimos un fragmento HTML reutilizable: el navbar -->
+  {% include "tienda/partials/navbar.html" %}
+
+  <main class="container">
+    <!-- Incluimos otro fragmento para mostrar mensajes (ej. notificaciones de éxito o error) -->
+    {% include "tienda/partials/messages.html" %}
+
+    <!-- Definimos el bloque 'content' que cada plantilla hija llenará con su contenido -->
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Bloque opcional para scripts (JS) que se necesiten en páginas específicas -->
+  {% block scripts %}{% endblock %}
+</body>
+</html>

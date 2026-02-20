@@ -1,0 +1,27 @@
+{% extends "tienda/base.html" %}
+<!-- Heredamos de base.html para mantener el mismo layout -->
+
+{% block title %}Productos{% endblock %}
+<!-- Cambiamos el título para esta página -->
+
+{% block content %}
+  <h1>Productos</h1>
+  <!-- Botón para crear un producto nuevo -->
+  <p>
+    <a href="{% url 'tienda:crear_producto' %}" class="btn btn-pill">➕ Nuevo producto</a>
+  </p>
+  <ul>
+    {% for p in productos %}
+      <!-- Recorremos la lista 'productos' enviada desde la vista lista_productos -->
+      <li>
+        <!-- Cada producto tiene un enlace a su detalle usando su PK -->
+        <a href="{% url 'tienda:detalle_producto' p.pk %}">{{ p.nombre }}</a>
+        — ${{ p.precio|floatformat:2 }}
+        <!-- Mostramos el nombre y el precio con 2 decimales -->
+      </li>
+    {% empty %}
+      <!-- Si el QuerySet está vacío, Django ejecuta este bloque -->
+      <li>No hay productos disponibles.</li>
+    {% endfor %}
+  </ul>
+{% endblock %}

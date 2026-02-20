@@ -1,0 +1,66 @@
+{% extends "tienda/base.html" %}
+{% block title %}Buscar{% endblock %}
+
+{% block content %}
+  <h1>Buscar productos</h1>
+
+  <!-- Overlay global de carga -->
+  <div id="loadingOverlay" class="loading-overlay" aria-hidden="true">
+    <div class="loader" role="status" aria-label="Buscando"></div>
+  </div>
+
+  <form id="buscarForm" method="get">
+    <input type="text" name="q" placeholder="Describe lo que buscas..." value="{{ q|default:'' }}" />
+    <button id="buscarBtn" class="btn btn-pill" type="submit">Buscar</button>
+  </form>
+
+  {% if q %}
+    <h3>Resultados para "{{ q }}"</h3>
+    <ul>
+      {% for r in resultados %}
+        <li>
+          <a href="{% url 'tienda:detalle_producto' r.id%}">{{ r.nombre }}</a> — ${{ r.precio }}<br/>
+          <small>{{ r.descripcion }}</small><br/>
+          <em>score: {{ r.score|floatformat:3 }}</em>
+        </li>
+      {% empty %}
+        <li>Sin resultados.</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+  // Al enviar el formulario, mostramos overlay y ponemos el botón en estado “loading”
+  (function () {
+    const form = document.getElementById('buscarForm');
+    const btn  = document.getElementById('buscarBtn');
+    const overlay = document.getElementById('loadingOverlay');
+
+    if (!form || !btn || !overlay) return;
+
+    form.addEventListener('submit', function () {
+      // Mostrar overlay
+      overlay.style.display = 'flex';
+      overlay.setAttribute('aria-hidden', 'false');
+
+      // Estado visual del botón
+      btn.classList.add('loading');
+      btn.dataset.loadingLabel = 'Buscando'; // activa los punticos con CSS
+      btn.setAttribute('aria-busy', 'true');
+      btn.disabled = true;
+    });
+
+    // Si la página se carga con resultados (al volver atrás), asegúrate de ocultar overlay
+    window.addEventListener('pageshow', function () {
+      overlay.style.display = 'none';
+      overlay.setAttribute('aria-hidden', 'true');
+      btn.classList.remove('loading');
+      btn.removeAttribute('data-loading-label');
+      btn.removeAttribute('aria-busy');
+      btn.disabled = false;
+    });
+  })();
+</script>
+{% endblock %}

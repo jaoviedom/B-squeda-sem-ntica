@@ -1,0 +1,23 @@
+{% extends "tienda/base.html" %}
+{% block title %}Lista de pedidos{% endblock %}
+
+{% block content %}
+  <h1>Pedidos</h1>
+
+  <p><a class="btn btn-pill" href="{% url 'tienda:crear_pedido_items' %}">➕ Nuevo pedido</a></p>
+
+  <ul>
+    {% for ped in pedidos %}
+      <li>
+        <a href="{% url 'tienda:detalle_pedido' ped.pk %}">Pedido #{{ ped.id }}</a>
+        — Cliente: {{ ped.cliente.nombre }}
+        — Estado: {{ ped.estado }}
+        — Fecha: {{ ped.fecha|date:"d/m/Y" }}
+        — Productos: {{ ped.total_productos|default:"0" }}
+        — Total: ${{ ped.total_precio|default:"0.00" }}
+      </li>
+    {% empty %}
+      <li>No hay pedidos registrados.</li>
+    {% endfor %}
+  </ul>
+{% endblock %}
